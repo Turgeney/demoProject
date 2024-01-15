@@ -1,0 +1,82 @@
+﻿@model UserApp.Models.UserPositionViewModel
+
+@{
+    ViewData["Title"] = "Список пользователей";
+}
+
+<h1>Список пользователей</h1>
+
+<p>
+    <a asp-action="Create">Новая запись</a>
+</p>
+<form asp-controller="UserInfo" asp-action="Index" method="get">
+    <p>
+        <select asp-for="UserPosition" asp-items="Model.Positions">
+            <option value="">Все</option>
+        </select>
+        
+        Поиск пользователей по имени: <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Искать" />
+    </p>
+</form>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                /@Html.DisplayNameFor(model => model.Users[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Users[0].DoB)
+            </th>
+            <th>
+                Возраст
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Users[0].Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Users[0].Position)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Users) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DoB)
+            </td>
+            <td>
+            @{
+                DateTime dob = item.DoB;
+                var curdate = DateTime.Today;
+                int leapyears = 0;
+                for (int n = dob.Year; n <= curdate.Year; n++)
+                {
+                    if (DateTime.IsLeapYear(n)){ leapyears++; }
+                };
+                TimeSpan span = curdate - dob;
+                int age = (span.Days - leapyears)/365;
+            }   
+            @age
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Position)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Редактировать</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Детали</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Удалить запись</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
